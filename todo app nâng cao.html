@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Todo App Thông Minh - Đỗ Nhật Thanh </title>
+
+    <style>
+        body{
+            font-family: 'Segoe UI',sans-serif;
+            background: linear-gradient(to right,#fedbeb,#f0f9ff);
+            padding:20px;
+            max-width:600px;
+            margin:auto;
+
+        }
+
+        h2{
+            text-align:center;
+            color:#0f172a;
+        }
+
+        .todo-container{
+            background:white;
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        ul{
+            list-style:none;
+            padding:0;
+        }
+
+
+        li{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            margin-bottom:10px;
+            padding:10px;
+            border-radius:6px;
+            transition:background 0.3s;
+
+        }
+
+        li:hover{
+            background:#f1f5f9;
+        }
+
+        input[type="checkbox"]{
+            transform:scale(1.2);
+            margin-right:10px;
+            
+        }
+
+        input[type="checkbox"]:checked+span{
+            text-decoration:line-through;
+            color:gray;
+        }
+
+        .todo-text{
+            flex-grow:1;
+        }
+
+        .delete-btn{
+            background:red;
+            border:none;
+            color:white;
+            padding:6px 12px;
+            border-radius:4px;
+            cursor:pointer;
+            transition:background 0.3s;
+
+        }
+
+        .delete-btn:hover{
+            display:flex;
+            gap:10px;
+            margin-bottom:20px;
+        }
+
+
+        .add-task{
+            display:flex;
+            gap:10px;
+            margin-bottom:20px;
+        }
+
+        .add-task input{
+            flex:1;
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius: 6px;
+
+        }
+
+        .add-task button{
+            padding:10px 15px;
+            background-color:#2563eb;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+
+        }
+
+        .add-task button:hover{
+            background-color:#1e40af;
+
+        }
+
+        media(max-width:500px){
+            .add-task{
+                flex-direction:column;
+
+            
+            }
+        }
+
+
+
+    
+    </style>
+
+
+</head>
+
+<body> 
+    <h2> ✅Việc cần làm </h2>
+    <div class="todo-container">
+        <div class="add-task">
+            <input type="text" id="newTask" placeholder="Nhập việc cần làm ">
+            <button onclick="addTask()"> Thêm </button>
+        </div>
+
+        <ul id="taskList"></ul>
+
+    </div>
+
+<script>
+    const taskList = document.getElementById('taskList');
+
+    function saveTasks(){
+        const tasks = [];
+        document.querySelectorAll('#taskList li').forEach(li=>{
+            const text = li.querySelector('span').textContent;
+            const checked = li.querySelector('input').checked;
+            tasks.push({text,checked});
+
+        });
+        localStorage.setItem('tasks',JSON.stringify(tasks));
+
+    }
+
+    function loadTasks(){
+        const saved = localStorage.getItem('tasks');
+        
+    
+
+    if(saved){
+        const tasks= JSON.parse(saved);
+        tasks.forEach(task=> createTaskElement(task.text,task.checked));
+
+    }
+    }
+
+    function createTaskElement(text,checked=false){
+        const li = document.createElement('li');
+
+        const checkbox = document.createElement('input');
+        checkbox.type='checkbox';
+        checkbox.checked=checked;
+        checkbox.addEventListener('change',saveTasks);
+
+        const span = document.createElement('span');
+        span.className='todo-text';
+        span.textContent=text;
+
+        const btn = document.createElement('button');
+        btn.className='delete-btn';
+        btn.textContent="Xoá";
+        btn.onclick=()=>{
+            li.remove();
+            saveTasks();
+
+        };
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(btn);
+        taskList.appendChild(li);        
+
+    }
+
+    function addTask(){
+        const input = document.getElementById('newTask');
+        const text = input.value.trim();
+        if(text){
+            createTaskElement(text);
+            saveTasks();
+            input.value="";
+        }
+    }
+
+    loadTasks();
+
+
+</script>
+
+</body>
+
+
+
+</html>
